@@ -1,4 +1,5 @@
 const express = require('express');
+require('dotenv').config(); // Load environment variables
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const fs = require('fs');

@@ -190,56 +190,76 @@ def predict():
         risk_level = risk_map.get(int(pred_val), 'Medium')
 
         # ---------------------------------------------------------
-        # SAFETY OVERRIDE RULES (Hybrid AI Approach)
+        # PURE MODEL PREDICTION (No Safety Overrides)
         # ---------------------------------------------------------
-        # The ML model might underestimate risk for young patients.
-        # We apply rule-based heuristics for critical symptoms.
+        # User requested classification solely based on risk_model.pkl
+
         symptoms = data.get('symptoms', '').lower()
         department = 'General Practice' # Default initialization
-        
-        # Rule 1: Chest Pain or Cardiac symptoms -> Immediate High Risk
-        if 'chest' in symptoms or 'heart' in symptoms or 'stroke' in symptoms or 'breathe' in symptoms:
-            risk_level = "High"
-            department = "Cardiology"
-            proba = max(proba, 0.95) # High confidence for rule-based match
-            
-        # Rule 2: Hypertensive Crisis (Systolic > 160 or Diastolic > 100) -> High Risk
-        elif systolic >= 160 or diastolic >= 100:
-            risk_level = "High"
-            department = "Cardiology"
-            proba = max(proba, 0.90)
 
-        # Fallback departmental logic
-        if department == "General Practice": # Only set if not already set by override
+        # Fallback departmental logic (Map risk to department if valid)
+        if department == "General Practice": 
             if risk_level == "High":
                  department = "Cardiology" 
             elif risk_level == "Medium":
                  department = "Internal Medicine"
 
-        # Generate dynamic explanations
+        # Generate dynamic explanations (Points 1-3)
         explanations = []
         
         # Vital Checks
         if systolic > 140 or diastolic > 90:
-             explanations.append(f"Elevated Blood Pressure ({systolic}/{diastolic}) indicates hypertension.")
+             explanations.append(f"Elevated Blood Pressure ({systolic}/{diastolic}).")
         if heart_rate > 100:
-             explanations.append(f"Abnormal Heart Rate detected ({heart_rate} BPM).")
+             explanations.append(f"Abnormal Heart Rate ({heart_rate} BPM).")
         if temp > 100.4:
-             explanations.append(f"High Fever detected ({temp}°F).")
+             explanations.append(f"High Fever ({temp}°F).")
              
         # Symptom Checks
         if 'chest' in symptoms or 'pain' in symptoms:
-             explanations.append("Reported symptoms match critical cardiac warning signs.")
+             explanations.append("Reported critical symptoms (Pain/Chest).")
         if 'breath' in symptoms or 'breathing' in symptoms:
              explanations.append("Respiratory distress reported.")
              
         # Demographic Checks
         if age > 60:
-            explanations.append("Patient age group indicates higher vulnerability.")
+            explanations.append("Age factor increases risk.")
             
-        # Fallback
+        # Ensure we have at least something, but max 3 for the "first 3 points" rule
         if not explanations:
-            explanations.append("Routine analysis based on vitals and lifestyle factors.")
+            explanations.append("Vitals and symptoms analyzes.")
+        
+        # Keep only top 3 model-based reasons
+        explanations = explanations[:3]
+
+        # ---------------------------------------------------------
+        # LLM Elaboration (Point 4)
+        # ---------------------------------------------------------
+        try:
+            from openai import OpenAI
+            client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+            # Construct prompt based on model outputs
+            prompt = f"""
+            Context: A patient is diagnosed with '{risk_level}' risk.
+            Key Factors identified: {', '.join(explanations)}.
+            
+            Task: Write a simple, 1-sentence layman explanation elaborating on why this is serious (or not).
+            """
+            
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=50
+            )
+            llm_explanation = response.choices[0].message.content.strip()
+            # Add as the 4th point
+            explanations.append(f"AI Insight: {llm_explanation}")
+            
+        except Exception as e:
+            # Fallback if API fails (no key, net error, etc)
+            sys.stderr.write(f"LLM Error: {str(e)}\n")
+            explanations.append("AI Insight: Analysis based on clinical vitals.")
 
         result = {
             "risk_level": risk_level,

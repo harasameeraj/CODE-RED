@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Search } from 'lucide-react';
 import RiskBadge from '../components/RiskBadge';
+import { motion } from 'framer-motion';
 
 const Records = () => {
     const [patients, setPatients] = useState([]);
@@ -64,7 +65,7 @@ const Records = () => {
                                 <td className="px-6 py-4 text-slate-600">{p.department}</td>
                                 <td className="px-6 py-4 text-slate-600">
                                     <span className={`inline-block w-2 H-2 rounded-full mr-2 ${p.priority === 'Emergency' ? 'bg-red-500' :
-                                            p.priority === 'Priority' ? 'bg-yellow-500' : 'bg-blue-500'
+                                        p.priority === 'Priority' ? 'bg-yellow-500' : 'bg-blue-500'
                                         }`}></span>
                                     {p.priority}
                                 </td>

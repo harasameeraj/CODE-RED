@@ -27,3 +27,6 @@ dist
 
 # Local Storage
 backend/patients.json
+__pycache__/
+*.py[cod]
+*.pdf

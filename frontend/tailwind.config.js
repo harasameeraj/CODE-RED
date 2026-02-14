@@ -5,7 +5,17 @@ export default {
         "./src/**/*.{js,ts,jsx,tsx}",
     ],
     theme: {
-        extend: {},
+        extend: {
+            fontFamily: {
+                sans: ['Inter', 'sans-serif'],
+                display: ['Outfit', 'sans-serif'],
+            },
+            colors: {
+                slate: {
+                    850: '#152033', // Custom deep slate
+                }
+            }
+        },
     },
     plugins: [],
 }

@@ -3,6 +3,10 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
+const multer = require('multer');
+
+// Configure Multer for file uploads
+const upload = multer({ dest: 'uploads/' });
 
 const app = express();
 const PORT = 3000;
@@ -77,6 +81,51 @@ app.post('/api/analyze_patient', (req, res) => {
         } catch (e) {
             console.error("Failed to parse Python output:", resultString);
             res.json(getMockAnalysis(req.body));
+        }
+    }); // Closes pythonProcess.on
+}); // Closes app.post
+
+// POST /extract_from_pdf
+app.post('/api/extract_from_pdf', upload.single('file'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const filePath = req.file.path;
+    const { spawn } = require('child_process');
+    const pythonProcess = spawn('python3', ['./model/extract.py', filePath]);
+
+    let resultString = '';
+    let errorString = '';
+
+    pythonProcess.stdout.on('data', (data) => {
+        resultString += data.toString();
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+        errorString += data.toString();
+    });
+
+    pythonProcess.on('close', (code) => {
+        // Clean up uploaded file
+        fs.unlink(filePath, (err) => {
+            if (err) console.error("Error deleting file:", err);
+        });
+
+        if (code !== 0) {
+            console.error('Extraction script error:', errorString);
+            return res.status(500).json({ error: 'Extraction failed: ' + errorString });
+        }
+
+        try {
+            const result = JSON.parse(resultString);
+            if (result.error) {
+                return res.status(500).json({ error: result.error });
+            }
+            res.json(result);
+        } catch (e) {
+            console.error("Failed to parse extraction output:", resultString);
+            res.status(500).json({ error: 'Failed to parse extraction result' });
         }
     });
 });

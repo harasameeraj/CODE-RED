@@ -3,9 +3,11 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FileText, Loader2, User, Activity, Thermometer, Heart, Stethoscope, ChevronRight, UploadCloud } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const Triage = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const [extracting, setExtracting] = useState(false);
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
@@ -90,13 +92,13 @@ const Triage = () => {
                         <FileText size={32} className="text-white" />
                     </div>
                     <div>
-                        <h2 className="text-3xl font-bold text-white font-display tracking-tight">New Patient Intake</h2>
-                        <p className="text-blue-200/60 mt-1">AI-Assisted Diagnostic Triage Protocol</p>
+                        <h2 className="text-3xl font-bold text-white font-display tracking-tight">{t('new_triage')}</h2>
+                        <p className="text-blue-200/60 mt-1">{t('ai_protocol')}</p>
                     </div>
                     <div className="ml-auto">
                         <label className={`cursor-pointer flex items-center px-4 py-2 bg-slate-800 hover:bg-slate-700 text-blue-400 rounded-lg border border-blue-500/30 transition-all ${extracting ? 'opacity-50 pointer-events-none' : ''}`}>
                             {extracting ? <Loader2 size={18} className="animate-spin mr-2" /> : <UploadCloud size={18} className="mr-2" />}
-                            <span className="text-sm font-semibold">{extracting ? 'Extracting...' : 'Upload Medical Report'}</span>
+                            <span className="text-sm font-semibold">{extracting ? t('extracting') : t('upload_report')}</span>
                             <input type="file" accept=".pdf" className="hidden" onChange={handleFileUpload} />
                         </label>
                     </div>
@@ -110,25 +112,25 @@ const Triage = () => {
                         transition={{ delay: 0.1 }}
                     >
                         <h3 className="text-sm font-bold text-[var(--neon-blue)] w-fit mb-5 flex items-center uppercase tracking-widest px-3 py-1 bg-blue-500/10 rounded-full border border-blue-500/20 shadow-[0_0_10px_rgba(0,242,255,0.2)]">
-                            <User size={14} className="mr-2" /> Demographics
+                            <User size={14} className="mr-2" /> {t('demographics')}
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
-                                <label className="block text-xs font-bold text-blue-200 mb-2 uppercase tracking-wide">Patient Name / ID</label>
+                                <label className="block text-xs font-bold text-blue-200 mb-2 uppercase tracking-wide">{t('patient_id')}</label>
                                 <input required type="text" name="name" value={formData.name} onChange={handleChange} className="w-full glass-input" placeholder="e.g. John Doe" />
                             </div>
                             <div className="grid grid-cols-2 gap-6">
                                 <div>
-                                    <label className="block text-xs font-bold text-blue-200 mb-2 uppercase tracking-wide">Age</label>
-                                    <input required type="number" name="age" value={formData.age} onChange={handleChange} className="w-full glass-input" placeholder="Yrs" />
+                                    <label className="block text-xs font-bold text-blue-200 mb-2 uppercase tracking-wide">{t('age')}</label>
+                                    <input required type="number" name="age" value={formData.age} onChange={handleChange} className="w-full glass-input" placeholder={t('years')} />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-blue-200 mb-2 uppercase tracking-wide">Gender</label>
+                                    <label className="block text-xs font-bold text-blue-200 mb-2 uppercase tracking-wide">{t('gender')}</label>
                                     <div className="relative">
                                         <select name="gender" value={formData.gender} onChange={handleChange} className="w-full glass-input appearance-none bg-slate-900/50">
-                                            <option>Male</option>
-                                            <option>Female</option>
-                                            <option>Other</option>
+                                            <option>{t('male')}</option>
+                                            <option>{t('female')}</option>
+                                            <option>{t('other')}</option>
                                         </select>
                                         <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none text-slate-500">
                                             <ChevronRight size={16} className="rotate-90" />
@@ -146,19 +148,19 @@ const Triage = () => {
                         transition={{ delay: 0.2 }}
                     >
                         <h3 className="text-sm font-bold text-[var(--neon-purple)] w-fit mb-5 flex items-center uppercase tracking-widest px-3 py-1 bg-purple-500/10 rounded-full border border-purple-500/20 shadow-[0_0_10px_rgba(189,0,255,0.2)]">
-                            <Activity size={14} className="mr-2" /> Vitals
+                            <Activity size={14} className="mr-2" /> {t('vitals')}
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
-                                <label className="block text-xs font-bold text-blue-200 mb-2 uppercase tracking-wide flex items-center"><Activity size={14} className="mr-2 text-red-500" /> Blood Pressure</label>
+                                <label className="block text-xs font-bold text-blue-200 mb-2 uppercase tracking-wide flex items-center"><Activity size={14} className="mr-2 text-red-500" /> {t('bp')}</label>
                                 <input type="text" name="bp" value={formData.bp} onChange={handleChange} className="w-full glass-input" placeholder="120/80" />
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-blue-200 mb-2 uppercase tracking-wide flex items-center"><Heart size={14} className="mr-2 text-pink-500" /> Heart Rate</label>
+                                <label className="block text-xs font-bold text-blue-200 mb-2 uppercase tracking-wide flex items-center"><Heart size={14} className="mr-2 text-pink-500" /> {t('heart_rate')}</label>
                                 <input type="number" name="heartRate" value={formData.heartRate} onChange={handleChange} className="w-full glass-input" placeholder="BPM" />
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-blue-200 mb-2 uppercase tracking-wide flex items-center"><Thermometer size={14} className="mr-2 text-yellow-500" /> Temp (°F)</label>
+                                <label className="block text-xs font-bold text-blue-200 mb-2 uppercase tracking-wide flex items-center"><Thermometer size={14} className="mr-2 text-yellow-500" /> {t('temp')} (°F)</label>
                                 <input type="number" step="0.1" name="temperature" value={formData.temperature} onChange={handleChange} className="w-full glass-input" placeholder="98.6" />
                             </div>
                         </div>
@@ -171,16 +173,16 @@ const Triage = () => {
                         transition={{ delay: 0.3 }}
                     >
                         <h3 className="text-sm font-bold text-[var(--neon-pink)] w-fit mb-5 flex items-center uppercase tracking-widest px-3 py-1 bg-pink-500/10 rounded-full border border-pink-500/20 shadow-[0_0_10px_rgba(255,0,85,0.2)]">
-                            <Stethoscope size={14} className="mr-2" /> Clinical Observations
+                            <Stethoscope size={14} className="mr-2" /> {t('narrative')}
                         </h3>
                         <div className="space-y-6">
                             <div>
-                                <label className="block text-xs font-bold text-blue-200 mb-2 uppercase tracking-wide">Presenting Symptoms</label>
+                                <label className="block text-xs font-bold text-blue-200 mb-2 uppercase tracking-wide">{t('presenting_symptoms')}</label>
                                 <textarea required name="symptoms" value={formData.symptoms} onChange={handleChange} rows="3" className="w-full glass-input resize-none" placeholder="Describe main complaints..."></textarea>
                             </div>
 
                             <div>
-                                <label className="block text-xs font-bold text-blue-200 mb-2 uppercase tracking-wide">Medical History / Risk Factors</label>
+                                <label className="block text-xs font-bold text-blue-200 mb-2 uppercase tracking-wide">{t('medical_history')}</label>
                                 <textarea name="history" value={formData.history} onChange={handleChange} rows="2" className="w-full glass-input resize-none" placeholder="Relevant past history..."></textarea>
                             </div>
                         </div>
@@ -197,12 +199,12 @@ const Triage = () => {
                             {loading ? (
                                 <>
                                     <Loader2 className="animate-spin mr-2" />
-                                    Analyzing Clinical Data...
+                                    {t('analyzing_data')}
                                 </>
                             ) : (
                                 <>
                                     <Activity className="mr-2" />
-                                    Run AI Analysis
+                                    {t('run_analysis')}
                                 </>
                             )}
                         </motion.button>

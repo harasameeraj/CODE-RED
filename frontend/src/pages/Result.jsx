@@ -4,13 +4,15 @@ import axios from 'axios';
 import { CheckCircle, AlertOctagon, ArrowRight, Save, RotateCcw, Activity, Siren, User } from 'lucide-react';
 import RiskBadge from '../components/RiskBadge';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const Result = () => {
     const { state } = useLocation();
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const [saving, setSaving] = useState(false);
 
-    if (!state) return <div className="text-center p-10 text-white">No result data available.</div>;
+    if (!state) return <div className="text-center p-10 text-white">{t('no_result_data')}</div>;
 
     const { result, patientData } = state;
 
@@ -22,7 +24,7 @@ const Result = () => {
             navigate('/patients');
         } catch (error) {
             console.error("Error saving case:", error);
-            alert("Failed to save case.");
+            alert(t('error_save_case'));
         } finally {
             setSaving(false);
         }
@@ -45,16 +47,16 @@ const Result = () => {
                 <div>
                     <h2 className="text-4xl font-bold text-white font-display tracking-tight flex items-center">
                         {isHighRisk && <Siren className="mr-3 text-red-500 animate-pulse" />}
-                        Analysis Complete
+                        {t('analysis_complete')}
                     </h2>
-                    <p className="text-slate-400 mt-1">AI Confidence Score: <span className="text-[var(--neon-blue)] font-bold">{(result.confidence * 100).toFixed(1)}%</span></p>
+                    <p className="text-slate-400 mt-1">{t('confidence_score')}: <span className="text-[var(--neon-blue)] font-bold">{(result.confidence * 100).toFixed(1)}%</span></p>
                 </div>
                 <div className="flex space-x-4">
                     <button onClick={() => navigate('/triage')} className="btn-secondary flex items-center">
-                        <RotateCcw size={18} className="mr-2" /> New Triage
+                        <RotateCcw size={18} className="mr-2" /> {t('new_triage')}
                     </button>
                     <button onClick={handleSave} disabled={saving} className="btn-primary flex items-center shadow-[0_0_20px_rgba(59,130,246,0.5)]">
-                        <Save size={18} className="mr-2" /> {saving ? 'Saving...' : 'Save Record'}
+                        <Save size={18} className="mr-2" /> {saving ? t('saving') : t('save_record')}
                     </button>
                 </div>
             </motion.div>
@@ -80,7 +82,7 @@ const Result = () => {
                     <div className="relative z-10 w-full">
                         <div className="flex justify-between items-start mb-10 w-full">
                             <div>
-                                <p className="text-slate-400 uppercase text-xs font-bold tracking-[0.2em] mb-3">Recommended Department</p>
+                                <p className="text-slate-400 uppercase text-xs font-bold tracking-[0.2em] mb-3">{t('department')}</p>
                                 <h1 className="text-6xl font-black text-white font-display tracking-tight leading-none text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">
                                     {result.department}
                                 </h1>
@@ -92,13 +94,13 @@ const Result = () => {
 
                         <div className="grid grid-cols-2 gap-6 mb-10">
                             <div className="bg-slate-900/40 border border-white/10 p-6 rounded-2xl backdrop-blur-sm">
-                                <p className="text-xs text-slate-400 uppercase font-bold tracking-wider">Priority Level</p>
+                                <p className="text-xs text-slate-400 uppercase font-bold tracking-wider">{t('priority_level')}</p>
                                 <p className={`text-3xl font-bold mt-2`} style={{ color: result.risk_level === 'High' ? '#ef4444' : result.risk_level === 'Medium' ? '#f59e0b' : '#3b82f6' }}>
                                     {result.priority}
                                 </p>
                             </div>
                             <div className="bg-slate-900/40 border border-white/10 p-6 rounded-2xl backdrop-blur-sm">
-                                <p className="text-xs text-slate-400 uppercase font-bold tracking-wider">Est. Wait Time</p>
+                                <p className="text-xs text-slate-400 uppercase font-bold tracking-wider">{t('wait_time')}</p>
                                 <p className="text-3xl font-bold mt-2 text-white">{result.wait_time}</p>
                             </div>
                         </div>
@@ -107,7 +109,7 @@ const Result = () => {
                     <div className="border-t border-white/10 pt-8 relative z-10">
                         <h4 className="font-bold text-white mb-6 flex items-center uppercase text-sm tracking-widest">
                             <Activity size={18} className="mr-3 text-[var(--neon-blue)]" />
-                            AI Diagnostic Factors
+                            {t('ai_diagnostic_factors')}
                         </h4>
                         <ul className="space-y-4">
                             {result.explanations.map((exp, i) => (
@@ -137,44 +139,44 @@ const Result = () => {
                 >
                     <h3 className="font-bold text-white mb-6 border-b border-white/10 pb-4 flex items-center uppercase text-sm tracking-widest">
                         <User size={18} className="mr-3 text-[var(--neon-purple)]" />
-                        Patient Profile
+                        {t('patient_profile')}
                     </h3>
                     <div className="space-y-6">
                         <div>
-                            <span className="text-slate-500 block text-xs uppercase font-bold mb-1">Name / ID</span>
+                            <span className="text-slate-500 block text-xs uppercase font-bold mb-1">{t('patient_id')}</span>
                             <span className="font-bold text-white text-xl">{patientData.name}</span>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <span className="text-slate-500 block text-xs uppercase font-bold mb-1">Age</span>
-                                <span className="font-medium text-white text-lg">{patientData.age} <span className="text-sm text-slate-600">Yrs</span></span>
+                                <span className="text-slate-500 block text-xs uppercase font-bold mb-1">{t('age')}</span>
+                                <span className="font-medium text-white text-lg">{patientData.age} <span className="text-sm text-slate-600">{t('years')}</span></span>
                             </div>
                             <div>
-                                <span className="text-slate-500 block text-xs uppercase font-bold mb-1">Gender</span>
+                                <span className="text-slate-500 block text-xs uppercase font-bold mb-1">{t('gender')}</span>
                                 <span className="font-medium text-white text-lg">{patientData.gender}</span>
                             </div>
                         </div>
 
                         <div className="bg-slate-900/60 rounded-xl p-4 border border-white/5 shadow-inner">
-                            <span className="text-slate-500 block text-xs uppercase font-bold mb-3">Vitals Snapshot</span>
+                            <span className="text-slate-500 block text-xs uppercase font-bold mb-3">{t('vitals_snapshot')}</span>
                             <div className="grid grid-cols-1 gap-3">
                                 <div className="flex justify-between items-center border-b border-white/5 pb-2">
-                                    <span className="text-slate-400 text-sm">BP</span>
+                                    <span className="text-slate-400 text-sm">{t('bp')}</span>
                                     <span className="text-white font-mono font-bold">{patientData.bp || '--'}</span>
                                 </div>
                                 <div className="flex justify-between items-center border-b border-white/5 pb-2">
-                                    <span className="text-slate-400 text-sm">Heart Rate</span>
+                                    <span className="text-slate-400 text-sm">{t('heart_rate')}</span>
                                     <span className="text-white font-mono font-bold">{patientData.heartRate || '--'} <span className="text-xs text-slate-600">BPM</span></span>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                    <span className="text-slate-400 text-sm">Temp</span>
+                                    <span className="text-slate-400 text-sm">{t('temp')}</span>
                                     <span className="text-white font-mono font-bold">{patientData.temperature || '--'} <span className="text-xs text-slate-600">°F</span></span>
                                 </div>
                             </div>
                         </div>
 
                         <div>
-                            <span className="text-slate-500 block text-xs uppercase font-bold mb-2">Reported Symptoms</span>
+                            <span className="text-slate-500 block text-xs uppercase font-bold mb-2">{t('reported_symptoms')}</span>
                             <p className="text-slate-300 italic leading-relaxed border-l-2 border-white/10 pl-4 py-1">"{patientData.symptoms}"</p>
                         </div>
                     </div>

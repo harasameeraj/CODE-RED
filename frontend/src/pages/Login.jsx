@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Activity, Lock, User, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
 import { motion, useAnimation } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from '../components/LanguageSelector';
 
 const Login = ({ setIsAuthenticated }) => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const [formData, setFormData] = useState({ username: '', password: '' });
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -31,7 +34,7 @@ const Login = ({ setIsAuthenticated }) => {
             localStorage.setItem('isAuthenticated', 'true');
             navigate('/');
         } else {
-            setError('Access Denied: Invalid Credentials');
+            setError(t('access_denied'));
             setIsLoading(false);
             // Shake effect on error
             const form = document.getElementById('login-form');
@@ -45,6 +48,11 @@ const Login = ({ setIsAuthenticated }) => {
             {/* Dynamic Background: Connecting Nodes */}
             <div className="absolute inset-0 z-0 opacity-20">
                 <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:40px_40px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)]"></div>
+            </div>
+
+            {/* Language Selector */}
+            <div className="absolute top-4 right-4 z-50">
+                <LanguageSelector />
             </div>
 
             {/* Floating DNA/Pulse Elements */}
@@ -86,7 +94,7 @@ const Login = ({ setIsAuthenticated }) => {
                             <div className="p-2 bg-blue-500/20 rounded-lg border border-blue-500/30">
                                 <Activity size={24} className="text-[var(--neon-blue)]" />
                             </div>
-                            <span className="text-xl font-bold text-white tracking-wide">Apex<span className="text-[var(--neon-blue)]">Medical</span></span>
+                            <span className="text-xl font-bold text-white tracking-wide">{t('app_title')}</span>
                         </motion.div>
 
                         <motion.h1
@@ -95,8 +103,7 @@ const Login = ({ setIsAuthenticated }) => {
                             transition={{ delay: 0.5 }}
                             className="text-5xl font-bold font-display leading-tight text-transparent bg-clip-text bg-gradient-to-br from-white to-slate-400"
                         >
-                            Next-Gen <br />
-                            <span className="text-[var(--neon-blue)]">Clinical Triage</span>
+                            {t('next_gen_triage')}
                         </motion.h1>
 
                         <motion.p
@@ -105,7 +112,7 @@ const Login = ({ setIsAuthenticated }) => {
                             transition={{ delay: 0.6 }}
                             className="mt-6 text-slate-400 leading-relaxed max-w-sm"
                         >
-                            AI-powered diagnostic support system reducing wait times by 40%. Secure, fast, and compliant.
+                            {t('ai_powered_desc')}
                         </motion.p>
                     </div>
 
@@ -123,8 +130,8 @@ const Login = ({ setIsAuthenticated }) => {
                             ))}
                         </div>
                         <div className="text-xs text-slate-500">
-                            <strong className="text-white block">2,400+ Patients</strong>
-                            Triaged today
+                            <strong className="text-white block">{t('stat_value')}</strong>
+                            {t('stat_label')}
                         </div>
                     </motion.div>
                 </div>
@@ -142,9 +149,9 @@ const Login = ({ setIsAuthenticated }) => {
                                 transition={{ delay: 0.2 }}
                                 className="flex items-center justify-between"
                             >
-                                <h2 className="text-3xl font-bold text-white font-display">Welcome Back</h2>
+                                <h2 className="text-3xl font-bold text-white font-display">{t('welcome_back')}</h2>
                                 <div className="flex items-center text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-full border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
-                                    <ShieldCheck size={12} className="mr-1.5" /> ENCRYPTED
+                                    <ShieldCheck size={12} className="mr-1.5" /> {t('encrypted')}
                                 </div>
                             </motion.div>
                             <motion.p
@@ -153,7 +160,7 @@ const Login = ({ setIsAuthenticated }) => {
                                 transition={{ delay: 0.3 }}
                                 className="text-slate-400 mt-2"
                             >
-                                Please login to access patient records.
+                                {t('login_prompt')}
                             </motion.p>
                         </div>
 
@@ -174,7 +181,7 @@ const Login = ({ setIsAuthenticated }) => {
                                 transition={{ delay: 0.4 }}
                                 className="space-y-2 group"
                             >
-                                <label className="text-xs font-bold text-slate-300 ml-1 uppercase tracking-wide group-focus-within:text-[var(--neon-blue)] transition-colors">Username</label>
+                                <label className="text-xs font-bold text-slate-300 ml-1 uppercase tracking-wide group-focus-within:text-[var(--neon-blue)] transition-colors">{t('username')}</label>
                                 <div className="relative">
                                     <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500 group-focus-within:text-[var(--neon-blue)] transition-colors" size={18} />
                                     <input
@@ -183,7 +190,7 @@ const Login = ({ setIsAuthenticated }) => {
                                         value={formData.username}
                                         onChange={handleChange}
                                         className="w-full pl-11 pr-4 py-3.5 bg-slate-900/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-[var(--neon-blue)] focus:border-transparent outline-none text-white placeholder-slate-600 transition-all shadow-inner"
-                                        placeholder="Enter ID"
+                                        placeholder={t('enter_id')}
                                         required
                                     />
                                 </div>
@@ -195,7 +202,7 @@ const Login = ({ setIsAuthenticated }) => {
                                 transition={{ delay: 0.5 }}
                                 className="space-y-2 group"
                             >
-                                <label className="text-xs font-bold text-slate-300 ml-1 uppercase tracking-wide group-focus-within:text-[var(--neon-purple)] transition-colors">Password</label>
+                                <label className="text-xs font-bold text-slate-300 ml-1 uppercase tracking-wide group-focus-within:text-[var(--neon-purple)] transition-colors">{t('password')}</label>
                                 <div className="relative">
                                     <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500 group-focus-within:text-[var(--neon-purple)] transition-colors" size={18} />
                                     <input
@@ -228,7 +235,7 @@ const Login = ({ setIsAuthenticated }) => {
                                     />
                                 ) : (
                                     <>
-                                        <span className="mr-2">Secure Login</span>
+                                        <span className="mr-2">{t('secure_login')}</span>
                                         <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                                     </>
                                 )}
@@ -242,7 +249,7 @@ const Login = ({ setIsAuthenticated }) => {
                             className="mt-8 text-center"
                         >
                             <p className="text-xs text-slate-600 font-mono">
-                                System Status: <span className="text-emerald-500">Operational</span>
+                                {t('system_status')}: <span className="text-emerald-500">{t('operational')}</span>
                             </p>
                             <p className="text-[10px] text-slate-700 mt-2">admin / admin123</p>
                         </motion.div>

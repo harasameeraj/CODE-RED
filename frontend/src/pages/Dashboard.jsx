@@ -5,9 +5,11 @@ import { Users, AlertTriangle, Activity, Clock, Plus, ChevronRight, Zap } from '
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
 import StatCard from '../components/StatCard';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const Dashboard = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -37,15 +39,15 @@ const Dashboard = () => {
     );
 
     const pieData = [
-        { name: 'High Risk', value: stats.highRisk, color: '#ef4444' }, // Red-500
-        { name: 'Medium Risk', value: stats.mediumRisk, color: '#f59e0b' }, // Amber-500
-        { name: 'Low Risk', value: stats.lowRisk, color: '#10b981' }, // Emerald-500
+        { name: t('high_risk'), value: stats.highRisk, color: '#ef4444' }, // Red-500
+        { name: t('medium_risk'), value: stats.mediumRisk, color: '#f59e0b' }, // Amber-500
+        { name: t('low_risk'), value: stats.lowRisk, color: '#10b981' }, // Emerald-500
     ].filter(d => d.value > 0);
 
     const barData = [
-        { name: 'Emergency', users: stats.emergencyQueue },
-        { name: 'Priority', users: stats.priorityQueue },
-        { name: 'Normal', users: stats.normalQueue },
+        { name: t('emergency'), users: stats.emergencyQueue },
+        { name: t('priority'), users: stats.priorityQueue },
+        { name: t('normal'), users: stats.normalQueue },
     ];
 
     return (
@@ -54,9 +56,9 @@ const Dashboard = () => {
             <header className="flex flex-col md:flex-row justify-between items-end md:items-center pb-6 border-b border-white/5 relative">
                 <div className="relative z-10">
                     <h1 className="text-5xl font-bold text-white font-display mb-2 tracking-tight drop-shadow-lg">
-                        Command Center <span className="text-[var(--neon-blue)] text-6xl">.</span>
+                        {t('command_center')} <span className="text-[var(--neon-blue)] text-6xl">.</span>
                     </h1>
-                    <p className="text-slate-400 text-lg">Live AI-Assisted Triage Operations</p>
+                    <p className="text-slate-400 text-lg">{t('live_operations')}</p>
                 </div>
 
                 {/* Decorative glow */}
@@ -70,17 +72,17 @@ const Dashboard = () => {
                 >
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
                     <Zap className="mr-2 fill-current" size={20} />
-                    Initiate Triage
+                    {t('initiate_triage')}
                     <ChevronRight size={16} className="ml-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                 </motion.button>
             </header>
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <StatCard title="Total Patients" value={stats.total} icon={Users} color="border-blue-500" delay={0.1} />
-                <StatCard title="High Risk" value={stats.highRisk} icon={AlertTriangle} color="border-red-500" delay={0.2} />
-                <StatCard title="Medium Risk" value={stats.mediumRisk} icon={Activity} color="border-yellow-500" delay={0.3} />
-                <StatCard title="Low Risk" value={stats.lowRisk} icon={Clock} color="border-green-500" delay={0.4} />
+                <StatCard title={t('total_patients')} value={stats.total} icon={Users} color="border-blue-500" delay={0.1} />
+                <StatCard title={t('high_risk')} value={stats.highRisk} icon={AlertTriangle} color="border-red-500" delay={0.2} />
+                <StatCard title={t('medium_risk')} value={stats.mediumRisk} icon={Activity} color="border-yellow-500" delay={0.3} />
+                <StatCard title={t('low_risk')} value={stats.lowRisk} icon={Clock} color="border-green-500" delay={0.4} />
             </div>
 
             {/* Charts Section */}
@@ -96,7 +98,7 @@ const Dashboard = () => {
 
                     <h3 className="text-xl font-bold mb-6 text-white font-display flex items-center relative z-10">
                         <span className="w-1.5 h-8 bg-[var(--neon-purple)] rounded-full mr-3 shadow-[0_0_10px_var(--neon-purple)]"></span>
-                        Risk Distribution
+                        {t('risk_distribution')}
                     </h3>
                     <div className="h-80 relative z-10" style={{ width: '100%', height: 320 }}>
                         {pieData.length > 0 ? (
@@ -125,7 +127,7 @@ const Dashboard = () => {
                         ) : (
                             <div className="h-full flex flex-col items-center justify-center text-slate-500 bg-white/5 rounded-2xl border border-white/5 border-dashed">
                                 <Activity size={32} className="mb-2 opacity-50" />
-                                <span>No data available yet</span>
+                                <span>{t('no_data')}</span>
                             </div>
                         )}
                     </div>
@@ -142,7 +144,7 @@ const Dashboard = () => {
 
                     <h3 className="text-xl font-bold mb-6 text-white font-display flex items-center relative z-10">
                         <span className="w-1.5 h-8 bg-[var(--neon-blue)] rounded-full mr-3 shadow-[0_0_10px_var(--neon-blue)]"></span>
-                        Live Queue Status
+                        {t('live_queue_status')}
                     </h3>
                     <div className="h-80 relative z-10" style={{ width: '100%', height: 320 }}>
                         <ResponsiveContainer width="100%" height="100%">

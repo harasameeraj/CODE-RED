@@ -5,6 +5,12 @@
 @tailwind utilities;
 
 @layer base {
+  body {
+    font-family: 'Noto Sans', sans-serif;
+  }
+}
+
+@layer base {
   :root {
     --bg-primary: #0f172a;
     /* Slate 900 - Slightly lighter, cleaner dark */

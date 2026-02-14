@@ -6,17 +6,27 @@ import numpy as np
 import os
 
 # Load the model
-model_path = os.path.join(os.path.dirname(__file__), 'health_model.pkl')
+risk_model_path = os.path.join(os.path.dirname(__file__), 'risk_model.pkl')
+health_model_path = os.path.join(os.path.dirname(__file__), 'health_model.pkl')
 
 def load_model():
-    if not os.path.exists(model_path):
-        return None
-    try:
-        # Use joblib instead of pickle for better compatibility
-        return joblib.load(model_path)
-    except Exception as e:
-        sys.stderr.write(f"Error loading model: {str(e)}\n")
-        return None
+    # Try loading the new Risk Model first
+    if os.path.exists(risk_model_path):
+        try:
+            sys.stderr.write("Loading new Risk Model...\n")
+            return joblib.load(risk_model_path)
+        except Exception as e:
+            sys.stderr.write(f"Error loading Risk Model: {str(e)}\n")
+    
+    # Fallback to original Health Model
+    if os.path.exists(health_model_path):
+        try:
+            sys.stderr.write("Fallback: Loading original Health Model...\n")
+            return joblib.load(health_model_path)
+        except Exception as e:
+            sys.stderr.write(f"Error loading Health Model: {str(e)}\n")
+            return None
+    return None
 
 model = load_model()
 
@@ -94,6 +104,10 @@ def preprocess_input(data):
         'Diastolic Blood Pressure': diastolic,
         'Derived_MAP': derived_map
     }])
+
+    # Convert object columns to category for XGBoost
+    for col in ['Gender', 'Smoking Status', 'Chronic Disease History']:
+        df[col] = df[col].astype('category')
     
     return df
 
@@ -116,7 +130,26 @@ def predict():
 
         # Preprocess
         features = preprocess_input(data)
+
+        # NEW MODEL (Risk Model) Feature Selection
+        # The new xgboost model was trained on a specific subset of features.
+        # We must filter the dataframe to match exactly what it expects.
+        expected_features = [
+            'Age', 'Heart Rate', 'Respiratory Rate', 'Body Temperature', 
+            'Oxygen Saturation', 'Systolic Blood Pressure', 'Diastolic Blood Pressure'
+        ]
         
+        # Check if we are using the new model (by checking if it is an XGBClassifier/Booster)
+        # For safety, we just try to select these columns if they exist
+        try:
+             # If using the new complicated model, it might fail on extra columns
+             # But if we reverted to old model, we might need all columns.
+             # HACK: matches the error "feature_names mismatch" which listed these 7.
+             if "XGB" in str(type(model)):
+                 features = features[expected_features]
+        except:
+             pass
+
         # Predict
         prediction = model.predict(features)[0]
         
@@ -162,6 +195,7 @@ def predict():
         # The ML model might underestimate risk for young patients.
         # We apply rule-based heuristics for critical symptoms.
         symptoms = data.get('symptoms', '').lower()
+        department = 'General Practice' # Default initialization
         
         # Rule 1: Chest Pain or Cardiac symptoms -> Immediate High Risk
         if 'chest' in symptoms or 'heart' in symptoms or 'stroke' in symptoms or 'breathe' in symptoms:

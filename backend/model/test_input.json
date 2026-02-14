@@ -1,0 +1,9 @@
+{
+    "age": "45",
+    "gender": "Male",
+    "symptoms": "Chest pain",
+    "bp": "140/90",
+    "heartRate": "100",
+    "temperature": "99.0",
+    "history": "None"
+}

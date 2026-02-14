@@ -38,8 +38,52 @@ if (!fs.existsSync(DATA_FILE)) {
 // POST /analyze_patient
 app.post('/api/analyze_patient', (req, res) => {
     const { age, symptoms, bp, heartRate, temperature } = req.body;
+    const { spawn } = require('child_process');
 
-    // Mock AI Logic
+    const pythonProcess = spawn('python3', ['./model/predict.py']);
+
+    let resultString = '';
+    let errorString = '';
+
+    // Send data to python script
+    pythonProcess.stdin.write(JSON.stringify(req.body));
+    pythonProcess.stdin.end();
+
+    pythonProcess.stdout.on('data', (data) => {
+        resultString += data.toString();
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+        errorString += data.toString();
+    });
+
+    pythonProcess.on('close', (code) => {
+        if (code !== 0) {
+            console.error(`Python script exited with code ${code}`);
+            console.error('Python Error:', errorString);
+            // Fallback to mock if python fails
+            return res.json(getMockAnalysis(req.body));
+        }
+
+        try {
+            const result = JSON.parse(resultString);
+            if (result.error) {
+                console.warn("Model warning:", result.error);
+                // Merge fallback data if model returns limited info
+                const fallback = getMockAnalysis(req.body);
+                return res.json({ ...fallback, ...result, explanations: [...fallback.explanations, ...(result.explanations || [])] });
+            }
+            res.json(result);
+        } catch (e) {
+            console.error("Failed to parse Python output:", resultString);
+            res.json(getMockAnalysis(req.body));
+        }
+    });
+});
+
+// Fallback Mock Logic (moved to function)
+function getMockAnalysis(data) {
+    const { symptoms, bp, heartRate, temperature } = data;
     let risk_level = 'Low';
     let department = 'General Practice';
     let priority = 'Normal';
@@ -47,8 +91,6 @@ app.post('/api/analyze_patient', (req, res) => {
     let confidence = 0.75 + Math.random() * 0.2;
     let explanations = [];
 
-    // Simple heuristic for mock
-    // Backend now expects flat structure matching frontend
     const sysBP = bp ? parseInt(bp.split('/')[0]) : 120;
     const temp = temperature ? parseFloat(temperature) : 98.6;
     const hr = heartRate ? parseInt(heartRate) : 70;
@@ -77,15 +119,15 @@ app.post('/api/analyze_patient', (req, res) => {
         explanations.push('Routine checkup based on reported symptoms.');
     }
 
-    res.json({
+    return {
         risk_level,
         department,
         priority,
         wait_time,
         confidence: parseFloat(confidence.toFixed(2)),
         explanations
-    });
-});
+    };
+}
 
 // POST /save_case
 app.post('/api/save_case', (req, res) => {

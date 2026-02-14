@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
+const db = require('./database'); // Import SQLite connection
 
 // Configure Multer for file uploads
 const upload = multer({ dest: 'uploads/' });
@@ -13,31 +14,6 @@ const PORT = 3000;
 
 app.use(cors());
 app.use(bodyParser.json());
-
-const DATA_FILE = path.join(__dirname, 'patients.json');
-
-// Helper to read data
-const readData = () => {
-    if (!fs.existsSync(DATA_FILE)) {
-        return { patients: [] };
-    }
-    const data = fs.readFileSync(DATA_FILE);
-    try {
-        return JSON.parse(data);
-    } catch (e) {
-        return { patients: [] };
-    }
-};
-
-// Helper to write data
-const writeData = (data) => {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
-};
-
-// Initialize file if not exists
-if (!fs.existsSync(DATA_FILE)) {
-    writeData({ patients: [] });
-}
 
 // POST /analyze_patient
 app.post('/api/analyze_patient', (req, res) => {
@@ -184,35 +160,68 @@ app.post('/api/save_case', (req, res) => {
     newCase.id = Date.now().toString(); // Simple ID
     newCase.date = new Date().toISOString();
 
-    const data = readData();
-    data.patients.push(newCase);
-    writeData(data);
+    const stmt = db.prepare(`INSERT INTO patients (
+        id, name, age, gender, symptoms, bp, heartRate, temperature, 
+        history, risk_level, department, priority, wait_time, confidence, explanations, date
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
 
-    res.json({ success: true, id: newCase.id });
+    const explanations = Array.isArray(newCase.explanations) ? JSON.stringify(newCase.explanations) : newCase.explanations;
+
+    stmt.run(
+        newCase.id, newCase.name, newCase.age, newCase.gender, newCase.symptoms,
+        newCase.bp, newCase.heartRate, newCase.temperature, newCase.history,
+        newCase.risk_level, newCase.department, newCase.priority,
+        newCase.wait_time, newCase.confidence, explanations, newCase.date,
+        function (err) {
+            if (err) {
+                console.error("Error saving case:", err);
+                return res.status(500).json({ error: "Database error" });
+            }
+            res.json({ success: true, id: newCase.id });
+        }
+    );
+    stmt.finalize();
 });
 
 // GET /dashboard_stats
 app.get('/api/dashboard_stats', (req, res) => {
-    const data = readData();
-    const patients = data.patients;
+    db.all("SELECT * FROM patients", [], (err, rows) => {
+        if (err) {
+            console.error("Error fetching stats:", err);
+            return res.status(500).json({ error: "Database error" });
+        }
 
-    const stats = {
-        total: patients.length,
-        highRisk: patients.filter(p => p.risk_level === 'High').length,
-        mediumRisk: patients.filter(p => p.risk_level === 'Medium').length,
-        lowRisk: patients.filter(p => p.risk_level === 'Low').length,
-        emergencyQueue: patients.filter(p => p.priority === 'Emergency').length,
-        priorityQueue: patients.filter(p => p.priority === 'Priority').length,
-        normalQueue: patients.filter(p => p.priority === 'Normal').length
-    };
+        const patients = rows;
+        const stats = {
+            total: patients.length,
+            highRisk: patients.filter(p => p.risk_level === 'High').length,
+            mediumRisk: patients.filter(p => p.risk_level === 'Medium').length,
+            lowRisk: patients.filter(p => p.risk_level === 'Low').length,
+            emergencyQueue: patients.filter(p => p.priority === 'Emergency').length,
+            priorityQueue: patients.filter(p => p.priority === 'Priority').length,
+            normalQueue: patients.filter(p => p.priority === 'Normal').length
+        };
 
-    res.json(stats);
+        res.json(stats);
+    });
 });
 
 // GET /patients
 app.get('/api/patients', (req, res) => {
-    const data = readData();
-    res.json(data.patients);
+    db.all("SELECT * FROM patients ORDER BY date DESC", [], (err, rows) => {
+        if (err) {
+            console.error("Error fetching patients:", err);
+            return res.status(500).json({ error: "Database error" });
+        }
+
+        // Parse explanations back to array
+        const patients = rows.map(p => ({
+            ...p,
+            explanations: p.explanations ? JSON.parse(p.explanations) : []
+        }));
+
+        res.json(patients);
+    });
 });
 
 app.listen(PORT, () => {

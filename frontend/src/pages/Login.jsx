@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Activity, Lock, User, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
-import { motion, useAnimation } from 'framer-motion';
+import { User, Lock, Activity } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import LanguageSelector from '../components/LanguageSelector';
 
@@ -11,7 +11,6 @@ const Login = ({ setIsAuthenticated }) => {
     const [formData, setFormData] = useState({ username: '', password: '' });
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const controls = useAnimation();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -22,238 +21,118 @@ const Login = ({ setIsAuthenticated }) => {
         setError('');
         setIsLoading(true);
 
-        // Simulate network delay related to "Secure Handshake"
+        // Simulate network delay
         await new Promise(resolve => setTimeout(resolve, 1200));
 
         const user = formData.username.trim().toLowerCase();
         const pass = formData.password.trim();
 
         if (user === 'admin' && pass === 'admin123') {
-            await controls.start({ opacity: 0, y: -20, transition: { duration: 0.3 } });
             setIsAuthenticated(true);
             localStorage.setItem('isAuthenticated', 'true');
             navigate('/');
         } else {
             setError(t('access_denied'));
             setIsLoading(false);
-            // Shake effect on error
-            const form = document.getElementById('login-form');
-            form?.classList.add('animate-shake');
-            setTimeout(() => form?.classList.remove('animate-shake'), 500);
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[#0f172a]">
-            {/* Dynamic Background: Connecting Nodes */}
-            <div className="absolute inset-0 z-0 opacity-20">
-                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:40px_40px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)]"></div>
-            </div>
-
-            {/* Language Selector */}
-            <div className="absolute top-4 right-4 z-50">
+        <div className="min-h-screen flex items-center justify-center bg-[#e0e5ec] p-4 font-sans text-slate-600">
+            <div className="absolute top-6 right-6 z-50">
                 <LanguageSelector />
             </div>
 
-            {/* Floating DNA/Pulse Elements */}
             <motion.div
-                animate={{
-                    y: [0, -20, 0],
-                    opacity: [0.3, 0.6, 0.3]
-                }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px]"
-            />
-            <motion.div
-                animate={{
-                    y: [0, 30, 0],
-                    opacity: [0.2, 0.5, 0.2]
-                }}
-                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-[100px]"
-            />
-
-            <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
-                className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 shadow-2xl rounded-3xl overflow-hidden z-20 bg-slate-900/60 backdrop-blur-3xl border border-white/10"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+                className="w-full max-w-sm bg-[#e0e5ec] rounded-[3rem] p-8 md:p-12 shadow-[9px_9px_16px_rgb(163,177,198,0.6),-9px_-9px_16px_rgba(255,255,255,0.5)]"
             >
-                {/* Left Side - Professional Branding */}
-                <div className="hidden md:flex flex-col justify-between p-12 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 relative overflow-hidden group">
-                    {/* Hover Glow Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-blue-500/5 to-blue-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-
-                    <div className="relative z-10">
-                        <motion.div
-                            initial={{ x: -20, opacity: 0 }}
-                            animate={{ x: 0, opacity: 1 }}
-                            transition={{ delay: 0.3 }}
-                            className="flex items-center space-x-3 mb-10"
-                        >
-                            <div className="p-2 bg-blue-500/20 rounded-lg border border-blue-500/30">
-                                <Activity size={24} className="text-[var(--neon-blue)]" />
-                            </div>
-                            <span className="text-xl font-bold text-white tracking-wide">{t('app_title')}</span>
-                        </motion.div>
-
-                        <motion.h1
-                            initial={{ y: 20, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            transition={{ delay: 0.5 }}
-                            className="text-5xl font-bold font-display leading-tight text-transparent bg-clip-text bg-gradient-to-br from-white to-slate-400"
-                        >
-                            {t('next_gen_triage')}
-                        </motion.h1>
-
-                        <motion.p
-                            initial={{ y: 20, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            transition={{ delay: 0.6 }}
-                            className="mt-6 text-slate-400 leading-relaxed max-w-sm"
-                        >
-                            {t('ai_powered_desc')}
-                        </motion.p>
+                <div className="flex flex-col items-center mb-10">
+                    <div className="w-24 h-24 rounded-full bg-[#e0e5ec] shadow-[9px_9px_16px_rgb(163,177,198,0.6),-9px_-9px_16px_rgba(255,255,255,0.5)] flex items-center justify-center mb-6 text-slate-500">
+                        <User size={40} strokeWidth={1.5} />
                     </div>
-
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.8 }}
-                        className="flex items-center space-x-6 relative z-10"
-                    >
-                        <div className="flex -space-x-3">
-                            {[1, 2, 3].map((_, i) => (
-                                <div key={i} className="w-10 h-10 rounded-full border-2 border-slate-900 bg-slate-800 flex items-center justify-center text-xs text-slate-400">
-                                    <User size={16} />
-                                </div>
-                            ))}
-                        </div>
-                        <div className="text-xs text-slate-500">
-                            <strong className="text-white block">{t('stat_value')}</strong>
-                            {t('stat_label')}
-                        </div>
-                    </motion.div>
+                    <h1 className="text-2xl font-bold text-slate-700 mb-2 tracking-tight">{t('welcome_back')}</h1>
+                    <p className="text-slate-500 text-sm">{t('login_prompt')}</p>
                 </div>
 
-                {/* Right Side - Interactive Form */}
-                <div className="p-10 md:p-14 flex flex-col justify-center relative bg-slate-950/40">
-                    <motion.div
-                        animate={controls}
-                        id="login-form"
-                    >
-                        <div className="mb-10">
-                            <motion.div
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.2 }}
-                                className="flex items-center justify-between"
-                            >
-                                <h2 className="text-3xl font-bold text-white font-display">{t('welcome_back')}</h2>
-                                <div className="flex items-center text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-full border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
-                                    <ShieldCheck size={12} className="mr-1.5" /> {t('encrypted')}
-                                </div>
-                            </motion.div>
-                            <motion.p
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 0.3 }}
-                                className="text-slate-400 mt-2"
-                            >
-                                {t('login_prompt')}
-                            </motion.p>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    {error && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            className="text-red-500 text-sm text-center font-medium bg-red-100/50 py-2 rounded-lg"
+                        >
+                            {error}
+                        </motion.div>
+                    )}
+
+                    <div className="space-y-4">
+                        <div className="relative group">
+                            <div className="absolute left-5 top-1/2 transform -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors">
+                                <User size={18} />
+                            </div>
+                            <input
+                                type="text"
+                                name="username"
+                                value={formData.username}
+                                onChange={handleChange}
+                                placeholder={t('username')}
+                                className="w-full pl-12 pr-6 py-4 bg-[#e0e5ec] rounded-2xl shadow-[inset_6px_6px_10px_0_rgba(163,177,198,0.7),inset_-6px_-6px_10px_0_rgba(255,255,255,0.8)] text-slate-600 outline-none focus:ring-0 transition-all placeholder-slate-400 text-sm font-medium"
+                                required
+                            />
                         </div>
 
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            {error && (
-                                <motion.div
-                                    initial={{ opacity: 0, height: 0 }}
-                                    animate={{ opacity: 1, height: 'auto' }}
-                                    className="bg-red-500/10 border-l-2 border-red-500 text-red-300 text-sm p-3 rounded"
-                                >
-                                    {error}
-                                </motion.div>
-                            )}
+                        <div className="relative group">
+                            <div className="absolute left-5 top-1/2 transform -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors">
+                                <Lock size={18} />
+                            </div>
+                            <input
+                                type="password"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                placeholder={t('password')}
+                                className="w-full pl-12 pr-6 py-4 bg-[#e0e5ec] rounded-2xl shadow-[inset_6px_6px_10px_0_rgba(163,177,198,0.7),inset_-6px_-6px_10px_0_rgba(255,255,255,0.8)] text-slate-600 outline-none focus:ring-0 transition-all placeholder-slate-400 text-sm font-medium"
+                                required
+                            />
+                        </div>
+                    </div>
 
+                    <div className="flex items-center justify-between text-xs text-slate-500 px-2">
+                        <label className="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" className="form-checkbox text-blue-500 rounded bg-[#e0e5ec] border-slate-300 shadow-[inset_2px_2px_4px_0_rgba(163,177,198,0.7),inset_-2px_-2px_4px_0_rgba(255,255,255,0.8)] w-4 h-4" />
+                            <span>Remember me</span>
+                        </label>
+                        <button type="button" className="hover:text-blue-600 transition-colors">Forgot password?</button>
+                    </div>
+
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="w-full py-4 rounded-2xl bg-[#e0e5ec] text-slate-700 font-bold shadow-[9px_9px_16px_rgb(163,177,198,0.6),-9px_-9px_16px_rgba(255,255,255,0.5)] active:shadow-[inset_4px_4px_8px_0_rgba(163,177,198,0.7),inset_-4px_-4px_8px_0_rgba(255,255,255,0.8)] active:translate-y-[1px] transition-all flex items-center justify-center hover:text-blue-600 text-sm uppercase tracking-wider mt-8"
+                    >
+                        {isLoading ? (
                             <motion.div
-                                initial={{ x: 50, opacity: 0 }}
-                                animate={{ x: 0, opacity: 1 }}
-                                transition={{ delay: 0.4 }}
-                                className="space-y-2 group"
-                            >
-                                <label className="text-xs font-bold text-slate-300 ml-1 uppercase tracking-wide group-focus-within:text-[var(--neon-blue)] transition-colors">{t('username')}</label>
-                                <div className="relative">
-                                    <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500 group-focus-within:text-[var(--neon-blue)] transition-colors" size={18} />
-                                    <input
-                                        type="text"
-                                        name="username"
-                                        value={formData.username}
-                                        onChange={handleChange}
-                                        className="w-full pl-11 pr-4 py-3.5 bg-slate-900/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-[var(--neon-blue)] focus:border-transparent outline-none text-white placeholder-slate-600 transition-all shadow-inner"
-                                        placeholder={t('enter_id')}
-                                        required
-                                    />
-                                </div>
-                            </motion.div>
+                                animate={{ rotate: 360 }}
+                                transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                                className="w-5 h-5 border-2 border-slate-400 border-t-blue-500 rounded-full"
+                            />
+                        ) : (
+                            t('secure_login')
+                        )}
+                    </button>
 
-                            <motion.div
-                                initial={{ x: 50, opacity: 0 }}
-                                animate={{ x: 0, opacity: 1 }}
-                                transition={{ delay: 0.5 }}
-                                className="space-y-2 group"
-                            >
-                                <label className="text-xs font-bold text-slate-300 ml-1 uppercase tracking-wide group-focus-within:text-[var(--neon-purple)] transition-colors">{t('password')}</label>
-                                <div className="relative">
-                                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500 group-focus-within:text-[var(--neon-purple)] transition-colors" size={18} />
-                                    <input
-                                        type="password"
-                                        name="password"
-                                        value={formData.password}
-                                        onChange={handleChange}
-                                        className="w-full pl-11 pr-4 py-3.5 bg-slate-900/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-[var(--neon-purple)] focus:border-transparent outline-none text-white placeholder-slate-600 transition-all shadow-inner"
-                                        placeholder="••••••••"
-                                        required
-                                    />
-                                </div>
-                            </motion.div>
+                    <div className="mt-10 text-center">
+                        <div className="px-6 py-3 rounded-xl bg-[#e0e5ec] shadow-[inset_4px_4px_8px_0_rgba(163,177,198,0.7),inset_-4px_-4px_8px_0_rgba(255,255,255,0.8)] inline-block">
+                            <span className="text-xs font-bold text-slate-500 tracking-wider uppercase">Pragnya Hackathon Prototype</span>
+                        </div>
+                    </div>
+                </form>
 
-                            <motion.button
-                                initial={{ y: 20, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                transition={{ delay: 0.6 }}
-                                whileHover={{ scale: 1.02, boxShadow: "0 0 20px rgba(56, 189, 248, 0.4)" }}
-                                whileTap={{ scale: 0.98 }}
-                                type="submit"
-                                disabled={isLoading}
-                                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-4 rounded-xl shadow-lg transition-all flex items-center justify-center relative overflow-hidden group mt-6"
-                            >
-                                {isLoading ? (
-                                    <motion.div
-                                        animate={{ rotate: 360 }}
-                                        transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                                        className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
-                                    />
-                                ) : (
-                                    <>
-                                        <span className="mr-2">{t('secure_login')}</span>
-                                        <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                                    </>
-                                )}
-                            </motion.button>
-                        </form>
-
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.8 }}
-                            className="mt-8 text-center"
-                        >
-                            <p className="text-xs text-slate-600 font-mono">
-                                {t('system_status')}: <span className="text-emerald-500">{t('operational')}</span>
-                            </p>
-                            <p className="text-[10px] text-slate-700 mt-2">admin / admin123</p>
-                        </motion.div>
-                    </motion.div>
+                <div className="mt-8 text-center">
+                    <p className="text-[10px] text-slate-400 font-mono">admin / admin123</p>
                 </div>
             </motion.div>
         </div>

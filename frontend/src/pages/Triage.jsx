@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Loader2, User, Activity, Thermometer, Heart, Stethoscope, ChevronRight, UploadCloud } from 'lucide-react';
+import { FileText, Loader2, UploadCloud, Activity, Heart, Thermometer, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
@@ -16,8 +16,8 @@ const Triage = () => {
         gender: 'Male',
         symptoms: '',
         bp: '',
-        heartRate: '',
-        temperature: '',
+        heartRate: 75,
+        temperature: 98.6,
         history: ''
     });
 
@@ -46,11 +46,10 @@ const Triage = () => {
                 temperature: extracted.temperature || prev.temperature,
                 history: extracted.history || prev.history
             }));
-            console.log("Extracted Data:", extracted); // DEBUG
-            alert("Data extracted successfully! Please review the fields.");
+            alert("Data extracted successfully!");
         } catch (error) {
             console.error("Extraction error:", error);
-            alert("Failed to extract data from PDF.");
+            alert("Failed to extract data.");
         } finally {
             setExtracting(false);
         }
@@ -65,153 +64,125 @@ const Triage = () => {
         setLoading(true);
         try {
             const res = await axios.post('http://localhost:3000/api/analyze_patient', formData);
-            // Simulate AI thinking time for effect
             await new Promise(r => setTimeout(r, 1500));
             navigate('/result', { state: { result: res.data, patientData: formData } });
         } catch (error) {
             console.error("Error analyzing patient:", error);
-            alert("Failed to analyze patient. Ensure backend is running.");
+            alert("Failed to analyze patient.");
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="max-w-4xl mx-auto pb-10"
-        >
-            <div className="glass-panel p-8 md:p-12 relative overflow-hidden">
-                {/* Background decorative elements */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full blur-[80px] pointer-events-none"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-                <div className="flex items-center mb-10 border-b border-white/5 pb-6 relative z-10">
-                    <div className="p-4 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl mr-6 shadow-[0_0_20px_rgba(37,99,235,0.4)]">
-                        <FileText size={32} className="text-white" />
-                    </div>
-                    <div>
-                        <h2 className="text-3xl font-bold text-white font-display tracking-tight">{t('new_triage')}</h2>
-                        <p className="text-blue-200/60 mt-1">{t('ai_protocol')}</p>
-                    </div>
-                    <div className="ml-auto">
-                        <label className={`cursor-pointer flex items-center px-4 py-2 bg-slate-800 hover:bg-slate-700 text-blue-400 rounded-lg border border-blue-500/30 transition-all ${extracting ? 'opacity-50 pointer-events-none' : ''}`}>
-                            {extracting ? <Loader2 size={18} className="animate-spin mr-2" /> : <UploadCloud size={18} className="mr-2" />}
-                            <span className="text-sm font-semibold">{extracting ? t('extracting') : t('upload_report')}</span>
+                {/* Left Column: Patient Registration */}
+                <div className="card-base p-8">
+                    <div className="flex justify-between items-center mb-8 border-b border-slate-100 pb-4">
+                        <h2 className="text-xl font-bold text-slate-900 flex items-center">
+                            <FileText className="mr-2 text-brand-600" size={24} />
+                            {t('new_triage', 'Patient Registration')}
+                        </h2>
+                        <label className={`cursor-pointer inline-flex items-center px-3 py-1.5 bg-brand-50 text-brand-700 rounded-md text-sm font-medium hover:bg-brand-100 transition-colors ${extracting ? 'opacity-50' : ''}`}>
+                            {extracting ? <Loader2 size={14} className="animate-spin mr-2" /> : <UploadCloud size={14} className="mr-2" />}
+                            {extracting ? 'Extracting...' : 'Import EMR/PDF'}
                             <input type="file" accept=".pdf" className="hidden" onChange={handleFileUpload} />
                         </label>
                     </div>
+
+                    <div className="space-y-6">
+                        <div>
+                            <label className="input-label">{t('full_name', 'Patient Details')}</label>
+                            <input required type="text" name="name" value={formData.name} onChange={handleChange} className="input-field mb-3" placeholder="Full Name" />
+                            <div className="grid grid-cols-2 gap-4">
+                                <input required type="number" name="age" value={formData.age} onChange={handleChange} className="input-field" placeholder="Age" />
+                                <div className="relative">
+                                    <select name="gender" value={formData.gender} onChange={handleChange} className="input-field appearance-none">
+                                        <option>Male</option>
+                                        <option>Female</option>
+                                        <option>Other</option>
+                                    </select>
+                                    <ChevronRight className="absolute right-3 top-3 text-slate-400 rotate-90 pointer-events-none" size={16} />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="input-label">{t('clinical_notes', 'Clinical Notes')}</label>
+                            <textarea required name="symptoms" value={formData.symptoms} onChange={handleChange} rows="4" className="input-field mb-4" placeholder="Presenting symptoms..."></textarea>
+                            <textarea name="history" value={formData.history} onChange={handleChange} rows="3" className="input-field" placeholder="Medical history..."></textarea>
+                        </div>
+                    </div>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-10 relative z-10">
-                    {/* Section 1: Demographics */}
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.1 }}
-                    >
-                        <h3 className="text-sm font-bold text-[var(--neon-blue)] w-fit mb-5 flex items-center uppercase tracking-widest px-3 py-1 bg-blue-500/10 rounded-full border border-blue-500/20 shadow-[0_0_10px_rgba(0,242,255,0.2)]">
-                            <User size={14} className="mr-2" /> {t('demographics')}
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Right Column: Vital Signs */}
+                <div className="card-base p-8 flex flex-col justify-between">
+                    <div>
+                        <div className="mb-8 border-b border-slate-100 pb-4">
+                            <h2 className="text-xl font-bold text-slate-900 flex items-center">
+                                <Activity className="mr-2 text-brand-600" size={24} />
+                                {t('vitals', 'Vital Signs')}
+                            </h2>
+                        </div>
+
+                        <div className="space-y-8">
+                            {/* Heart Rate Slider */}
                             <div>
-                                <label className="block text-xs font-bold text-blue-200 mb-2 uppercase tracking-wide">{t('patient_id')}</label>
-                                <input required type="text" name="name" value={formData.name} onChange={handleChange} className="w-full glass-input" placeholder="e.g. John Doe" />
-                            </div>
-                            <div className="grid grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-xs font-bold text-blue-200 mb-2 uppercase tracking-wide">{t('age')}</label>
-                                    <input required type="number" name="age" value={formData.age} onChange={handleChange} className="w-full glass-input" placeholder={t('years')} />
+                                <div className="flex justify-between mb-2">
+                                    <label className="input-label flex items-center"><Heart size={14} className="mr-1 text-accent-red" /> Heart Rate</label>
+                                    <span className="text-sm font-bold text-slate-700">{formData.heartRate} bpm</span>
                                 </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-blue-200 mb-2 uppercase tracking-wide">{t('gender')}</label>
-                                    <div className="relative">
-                                        <select name="gender" value={formData.gender} onChange={handleChange} className="w-full glass-input appearance-none bg-slate-900/50">
-                                            <option>{t('male')}</option>
-                                            <option>{t('female')}</option>
-                                            <option>{t('other')}</option>
-                                        </select>
-                                        <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none text-slate-500">
-                                            <ChevronRight size={16} className="rotate-90" />
-                                        </div>
-                                    </div>
+                                <input
+                                    type="range" min="40" max="180" name="heartRate"
+                                    value={formData.heartRate} onChange={handleChange}
+                                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-accent-red"
+                                />
+                            </div>
+
+                            {/* BP Input */}
+                            <div>
+                                <label className="input-label flex items-center"><Activity size={14} className="mr-1 text-brand-600" /> Blood Pressure</label>
+                                <input type="text" name="bp" value={formData.bp} onChange={handleChange} className="input-field text-center font-mono text-lg tracking-wider" placeholder="120/80" />
+                                <p className="text-xs text-slate-400 text-center mt-1">mmHg</p>
+                            </div>
+
+                            {/* Temperature Slider */}
+                            <div>
+                                <div className="flex justify-between mb-2">
+                                    <label className="input-label flex items-center"><Thermometer size={14} className="mr-1 text-amber-500" /> Temperature</label>
+                                    <span className="text-sm font-bold text-slate-700">{formData.temperature} °F</span>
                                 </div>
+                                <input
+                                    type="range" min="95" max="105" step="0.1" name="temperature"
+                                    value={formData.temperature} onChange={handleChange}
+                                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                                />
                             </div>
                         </div>
-                    </motion.div>
+                    </div>
 
-                    {/* Section 2: Clinical Data */}
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.2 }}
-                    >
-                        <h3 className="text-sm font-bold text-[var(--neon-purple)] w-fit mb-5 flex items-center uppercase tracking-widest px-3 py-1 bg-purple-500/10 rounded-full border border-purple-500/20 shadow-[0_0_10px_rgba(189,0,255,0.2)]">
-                            <Activity size={14} className="mr-2" /> {t('vitals')}
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div>
-                                <label className="block text-xs font-bold text-blue-200 mb-2 uppercase tracking-wide flex items-center"><Activity size={14} className="mr-2 text-red-500" /> {t('bp')}</label>
-                                <input type="text" name="bp" value={formData.bp} onChange={handleChange} className="w-full glass-input" placeholder="120/80" />
-                            </div>
-                            <div>
-                                <label className="block text-xs font-bold text-blue-200 mb-2 uppercase tracking-wide flex items-center"><Heart size={14} className="mr-2 text-pink-500" /> {t('heart_rate')}</label>
-                                <input type="number" name="heartRate" value={formData.heartRate} onChange={handleChange} className="w-full glass-input" placeholder="BPM" />
-                            </div>
-                            <div>
-                                <label className="block text-xs font-bold text-blue-200 mb-2 uppercase tracking-wide flex items-center"><Thermometer size={14} className="mr-2 text-yellow-500" /> {t('temp')} (°F)</label>
-                                <input type="number" step="0.1" name="temperature" value={formData.temperature} onChange={handleChange} className="w-full glass-input" placeholder="98.6" />
-                            </div>
-                        </div>
-                    </motion.div>
-
-                    {/* Section 3: Narrative */}
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.3 }}
-                    >
-                        <h3 className="text-sm font-bold text-[var(--neon-pink)] w-fit mb-5 flex items-center uppercase tracking-widest px-3 py-1 bg-pink-500/10 rounded-full border border-pink-500/20 shadow-[0_0_10px_rgba(255,0,85,0.2)]">
-                            <Stethoscope size={14} className="mr-2" /> {t('narrative')}
-                        </h3>
-                        <div className="space-y-6">
-                            <div>
-                                <label className="block text-xs font-bold text-blue-200 mb-2 uppercase tracking-wide">{t('presenting_symptoms')}</label>
-                                <textarea required name="symptoms" value={formData.symptoms} onChange={handleChange} rows="3" className="w-full glass-input resize-none" placeholder="Describe main complaints..."></textarea>
-                            </div>
-
-                            <div>
-                                <label className="block text-xs font-bold text-blue-200 mb-2 uppercase tracking-wide">{t('medical_history')}</label>
-                                <textarea name="history" value={formData.history} onChange={handleChange} rows="2" className="w-full glass-input resize-none" placeholder="Relevant past history..."></textarea>
-                            </div>
-                        </div>
-                    </motion.div>
-
-                    <div className="pt-8 border-t border-white/5 flex justify-end">
-                        <motion.button
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
+                    <div className="mt-8 pt-6 border-t border-slate-100">
+                        <button
                             disabled={loading}
                             type="submit"
-                            className="w-full md:w-auto btn-primary flex justify-center items-center text-lg shadow-[0_0_20px_rgba(37,99,235,0.6)]"
+                            className="w-full btn-primary py-4 text-base shadow-lg shadow-slate-200"
                         >
                             {loading ? (
                                 <>
                                     <Loader2 className="animate-spin mr-2" />
-                                    {t('analyzing_data')}
+                                    Processing Assessment...
                                 </>
                             ) : (
-                                <>
-                                    <Activity className="mr-2" />
-                                    {t('run_analysis')}
-                                </>
+                                'Generate Triage Assessment'
                             )}
-                        </motion.button>
+                        </button>
                     </div>
-                </form>
-            </div>
-        </motion.div>
+                </div>
+
+            </form>
+        </div>
     );
 };
 

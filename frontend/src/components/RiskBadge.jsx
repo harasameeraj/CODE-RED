@@ -5,21 +5,24 @@ const RiskBadge = ({ level }) => {
 
     switch (level?.toLowerCase()) {
         case 'high':
-            classes = 'bg-red-500/10 text-red-400 border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.4)] animate-pulse';
+        case 'critical':
+            classes = 'bg-red-100 text-red-700';
             break;
         case 'medium':
-            classes = 'bg-yellow-500/10 text-yellow-400 border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.4)]';
+        case 'moderate':
+            classes = 'bg-amber-100 text-amber-700';
             break;
         case 'low':
-            classes = 'bg-green-500/10 text-green-400 border-green-500/50 shadow-[0_0_15px_rgba(34,197,94,0.4)]';
+        case 'stable':
+            classes = 'bg-emerald-100 text-emerald-700';
             break;
         default:
-            classes = 'bg-slate-700 text-slate-300 border-slate-600';
+            classes = 'bg-slate-100 text-slate-600';
             break;
     }
 
     return (
-        <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border backdrop-blur-md ${classes}`}>
+        <span className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide ${classes}`}>
             {level}
         </span>
     );

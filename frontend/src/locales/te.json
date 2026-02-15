@@ -96,5 +96,20 @@
     "ai_powered_desc": "నిరీక్షణ సమయాన్ని 40% తగ్గించే AI-ఆధారిత డయాగ్నస్టిక్ సపోర్ట్ సిస్టమ్. సురక్షితమైనది, వేగవంతమైనది మరియు అనుకూలమైనది.",
     "patients_triaged": "ఈ రోజు ట్రయేజ్ చేయబడిన రోగులు",
     "stat_value": "సురక్షిత యాక్సెస్",
-    "stat_label": "వైద్య సిబ్బంది మాత్రమే"
+    "stat_label": "వైద్య సిబ్బంది మాత్రమే",
+    "clinical_dashboard": "క్లినికల్ డ్యాష్‌బోర్డ్",
+    "real_time_overview": "రియల్ టైమ్ డిపార్ట్మెంట్ అవలోకనం",
+    "high_risk_patients": "అధిక ప్రమాద రోగులు",
+    "department_distribution": "విభాగం పంపిణీ",
+    "dept_distribution_desc": "కేటాయించిన విభాగం ద్వారా సమూహపరచబడిన రోగులు",
+    "severity_analysis": "తీవ్రత విశ్లేషణ",
+    "dept_general_medicine": "జనరల్ మెడిసిన్",
+    "dept_cardiology": "కార్డియాలజీ",
+    "dept_pulmonology": "పల్మోనాలజీ",
+    "dept_endocrinology": "ఎండోక్రినాలజీ",
+    "dept_nutrition": "పోషణ క్లినిక్",
+    "critical": "క్లిష్టమైన",
+    "moderate": "మధ్యస్థ",
+    "stable": "స్థిరమైన",
+    "of_total": "మొత్తం లో"
 }

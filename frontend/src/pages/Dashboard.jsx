@@ -36,26 +36,26 @@ const Dashboard = () => {
 
     // Mock data for Risk Distribution Chart (Vertical Bars)
     const riskData = [
-        { name: 'Critical', value: stats.highRisk, color: '#ef4444' },
-        { name: 'Moderate', value: stats.mediumRisk, color: '#f59e0b' },
-        { name: 'Stable', value: stats.lowRisk, color: '#3b82f6' },
+        { name: t('critical'), value: stats.highRisk, color: '#ef4444' },
+        { name: t('moderate'), value: stats.mediumRisk, color: '#f59e0b' },
+        { name: t('stable'), value: stats.lowRisk, color: '#3b82f6' },
     ];
 
     // Mock data for Department Distribution
     const departments = [
-        { name: 'General Medicine', count: stats.normalQueue + 2, total: 10 },
-        { name: 'Cardiology', count: stats.priorityQueue + 1, total: 5 },
-        { name: 'Pulmonology', count: 0, total: 5 },
-        { name: 'Endocrinology', count: 0, total: 3 },
-        { name: 'Emergency', count: stats.emergencyQueue, total: 8 },
-        { name: 'Nutrition Clinic', count: 0, total: 2 },
+        { name: t('dept_general_medicine'), count: stats.normalQueue + 2, total: 10 },
+        { name: t('dept_cardiology'), count: stats.priorityQueue + 1, total: 5 },
+        { name: t('dept_pulmonology'), count: 0, total: 5 },
+        { name: t('dept_endocrinology'), count: 0, total: 3 },
+        { name: t('emergency'), count: stats.emergencyQueue, total: 8 },
+        { name: t('dept_nutrition'), count: 0, total: 2 },
     ];
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
             <div>
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Clinical Dashboard</h1>
-                <p className="text-slate-500 dark:text-slate-400">Real-time department overview</p>
+                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{t('clinical_dashboard')}</h1>
+                <p className="text-slate-500 dark:text-slate-400">{t('real_time_overview')}</p>
             </div>
 
             {/* Top Stats Cards */}
@@ -67,7 +67,7 @@ const Dashboard = () => {
                 >
                     <div className="absolute top-0 left-0 w-1 h-full bg-accent-red"></div>
                     <div>
-                        <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">High Risk Patients</p>
+                        <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">{t('high_risk_patients')}</p>
                         <h2 className="text-4xl font-bold text-slate-900 dark:text-white group-hover:scale-105 transition-transform origin-left">{stats.highRisk}</h2>
                     </div>
                     <div className="bg-accent-red/10 p-3 rounded-full text-accent-red dark:bg-accent-red/20">
@@ -82,7 +82,7 @@ const Dashboard = () => {
                 >
                     <div className="absolute top-0 left-0 w-1 h-full bg-brand-500"></div>
                     <div>
-                        <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Total Patients</p>
+                        <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">{t('total_patients')}</p>
                         <h2 className="text-4xl font-bold text-slate-900 dark:text-white group-hover:scale-105 transition-transform origin-left">{stats.total}</h2>
                     </div>
                     <div className="bg-brand-50 p-3 rounded-full text-brand-600 dark:bg-brand-900/40 dark:text-brand-400">
@@ -98,9 +98,9 @@ const Dashboard = () => {
                     <div className="mb-6">
                         <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center">
                             <Activity size={18} className="mr-2 text-brand-500" />
-                            Department Distribution
+                            {t('department_distribution')}
                         </h3>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">Patients grouped by assigned department</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{t('dept_distribution_desc')}</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
@@ -118,7 +118,7 @@ const Dashboard = () => {
                                     />
                                 </div>
                                 <div className="text-xs text-right text-slate-400 dark:text-slate-500">
-                                    {dept.count > 0 ? `${Math.round((dept.count / stats.total) * 100)}% of total` : '0% of total'}
+                                    {dept.count > 0 ? `${Math.round((dept.count / stats.total) * 100)}% ${t('of_total')}` : `0% ${t('of_total')}`}
                                 </div>
                             </div>
                         ))}
@@ -130,9 +130,9 @@ const Dashboard = () => {
                     <div className="mb-6">
                         <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center">
                             <Activity size={18} className="mr-2 text-brand-500" />
-                            Risk Distribution
+                            {t('risk_distribution')}
                         </h3>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">Severity analysis</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{t('severity_analysis')}</p>
                     </div>
 
                     <div className="h-64 w-full">
@@ -163,15 +163,15 @@ const Dashboard = () => {
                     <div className="flex justify-between mt-6 text-center">
                         <div>
                             <p className="text-2xl font-bold text-accent-red">{Math.round((stats.highRisk / Math.max(stats.total, 1)) * 100)}%</p>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">Critical</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">{t('critical')}</p>
                         </div>
                         <div>
                             <p className="text-2xl font-bold text-amber-500">{Math.round((stats.mediumRisk / Math.max(stats.total, 1)) * 100)}%</p>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">Moderate</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">{t('moderate')}</p>
                         </div>
                         <div>
                             <p className="text-2xl font-bold text-brand-500">{Math.round((stats.lowRisk / Math.max(stats.total, 1)) * 100)}%</p>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">Stable</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">{t('stable')}</p>
                         </div>
                     </div>
                 </div>

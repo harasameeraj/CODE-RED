@@ -96,5 +96,20 @@
     "ai_powered_desc": "AI-powered diagnostic support system reducing wait times by 40%. Secure, fast, and compliant.",
     "patients_triaged": "Patients Triaged today",
     "stat_value": "Secure Access",
-    "stat_label": "Medical Staff Only"
+    "stat_label": "Medical Staff Only",
+    "clinical_dashboard": "Clinical Dashboard",
+    "real_time_overview": "Real-time department overview",
+    "high_risk_patients": "High Risk Patients",
+    "department_distribution": "Department Distribution",
+    "dept_distribution_desc": "Patients grouped by assigned department",
+    "severity_analysis": "Severity analysis",
+    "dept_general_medicine": "General Medicine",
+    "dept_cardiology": "Cardiology",
+    "dept_pulmonology": "Pulmonology",
+    "dept_endocrinology": "Endocrinology",
+    "dept_nutrition": "Nutrition Clinic",
+    "critical": "Critical",
+    "moderate": "Moderate",
+    "stable": "Stable",
+    "of_total": "of total"
 }

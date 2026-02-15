@@ -96,5 +96,20 @@
     "ai_powered_desc": "एआई-संचालित नैदानिक सहायता प्रणाली प्रतीक्षा समय को 40% तक कम करती है। सुरक्षित, तेज और अनुपालन।",
     "patients_triaged": "आज ट्रायज किए गए रोगी",
     "stat_value": "सुरक्षित एक्सेस",
-    "stat_label": "केवल चिकित्सा कर्मी"
+    "stat_label": "केवल चिकित्सा कर्मी",
+    "clinical_dashboard": "नैदानिक डैशबोर्ड",
+    "real_time_overview": "वास्तविक समय विभाग अवलोकन",
+    "high_risk_patients": "उच्च जोखिम वाले रोगी",
+    "department_distribution": "विभाग वितरण",
+    "dept_distribution_desc": "नियुक्त विभाग द्वारा समूहीकृत रोगी",
+    "severity_analysis": "गंभीरता विश्लेषण",
+    "dept_general_medicine": "सामान्य चिकित्सा",
+    "dept_cardiology": "कार्डियोलॉजी",
+    "dept_pulmonology": "पल्मोनोलॉजी",
+    "dept_endocrinology": "एंडोक्रिनोलॉजी",
+    "dept_nutrition": "पोषण क्लिनिक",
+    "critical": "गंभीर",
+    "moderate": "मध्यम",
+    "stable": "स्थिर",
+    "of_total": "कुल का"
 }

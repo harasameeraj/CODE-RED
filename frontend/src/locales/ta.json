@@ -96,5 +96,20 @@
     "ai_powered_desc": "காத்திருப்பு நேரத்தை 40% குறைக்கும் AI-ஆற்றல் வாய்ந்த கண்டறியும் ஆதரவு அமைப்பு. பாதுகாப்பான, வேகமான மற்றும் இணக்கமான.",
     "patients_triaged": "இன்று ட்ரேஜ் செய்யப்பட்ட நோயாளிகள்",
     "stat_value": "பாதுகாப்பான அணுகல்",
-    "stat_label": "மருத்துவ பணியாளர்கள் மட்டும்"
+    "stat_label": "மருத்துவ பணியாளர்கள் மட்டும்",
+    "clinical_dashboard": "மருத்துவ கண்காணிப்பு குழு",
+    "real_time_overview": "நிகழ்நேர துறை கண்ணோட்டம்",
+    "high_risk_patients": "அதிக ஆபத்துள்ள நோயாளிகள்",
+    "department_distribution": "துறை விநியோகம்",
+    "dept_distribution_desc": "ஒதுக்கப்பட்ட துறையால் தொகுக்கப்பட்ட நோயாளிகள்",
+    "severity_analysis": "தீவிரத்தன்மை பகுப்பாய்வு",
+    "dept_general_medicine": "பொது மருத்துவம்",
+    "dept_cardiology": "இதயவியல்",
+    "dept_pulmonology": "நுரையீரலியல்",
+    "dept_endocrinology": "உட்சுரப்பியல்",
+    "dept_nutrition": "ஊட்டச்சத்து மருத்துவமனை",
+    "critical": "முக்கியமான",
+    "moderate": "மிதமான",
+    "stable": "நிலையான",
+    "of_total": "மொத்தத்தில்"
 }
